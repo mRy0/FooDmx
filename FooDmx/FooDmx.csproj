@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net7.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FTD2XX.Net" Version="1.2.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Art.Net">
+      <HintPath>..\..\Art.Net\ArtNet\bin\Release\net7.0\publish\Art.Net.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
