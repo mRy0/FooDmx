@@ -83,6 +83,7 @@
                 <local:DmxFader x:Name="fader13" Grid.Row="1" Grid.Column="13" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
                 <local:DmxFader x:Name="fader14" Grid.Row="1" Grid.Column="14" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
                 <local:DmxFader x:Name="fader15" Grid.Row="1" Grid.Column="15" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+                <Button x:Name="btAddrList" Grid.Column="15" Content="Adr. Liste" HorizontalAlignment="Center" VerticalAlignment="Center" Height="40" Width="49" Click="Button_Click"/>
             </Grid>
         </GroupBox>
 

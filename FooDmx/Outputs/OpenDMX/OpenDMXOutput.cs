@@ -31,12 +31,22 @@ namespace FooDmx.Outputs.OpenDMX
 
         public bool IsActive => true;
 
+        public byte[] Addresses { get; private set; }
+
+        public OpenDMXOutput()
+        {
+            Addresses = new byte[513];
+        }
+
         public UserControl GetOptionsPage()
         {
             return null;
         }
 
         private SemaphoreSlim _locker = new SemaphoreSlim(1, 1);
+
+        public event Action<byte[]> Updated;
+
         //private byte[] _addresses = new byte[512];
 
         public async Task RunAsync(CancellationToken cancellationToken)
@@ -110,8 +120,12 @@ namespace FooDmx.Outputs.OpenDMX
             try
             {
                 Array.Copy(addresses, 0, buffer, 1, addresses.Length);
+                Addresses = addresses;
             }
             finally { _locker.Release(); }
+
+            Updated?.Invoke(Addresses);
+
         }
     }
 }

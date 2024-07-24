@@ -16,6 +16,10 @@ namespace FooDmx.Outputs.ArtNET
 
         public bool IsActive => false;
 
+        public byte[] Addresses => throw new NotImplementedException();
+
+        public event Action<byte[]> Updated;
+
         public UserControl GetOptionsPage()
         {
             return new ArtNETSettingsPage();

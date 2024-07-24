@@ -57,8 +57,33 @@ namespace FooDmx
             fader13.ValueChanged += SetValue;
             fader14.ValueChanged += SetValue;
             fader15.ValueChanged += SetValue;
-            _ = _output.RunAsync(_cancellationTokenSource.Token);
+            //_ = _output.RunAsync(_cancellationTokenSource.Token);
+       
+            _output.SetAddresses(_addresses);
+            _output.Updated += _output_Updated;
         }
+
+        private void _output_Updated(byte[] obj)
+        {
+
+            fader0.Value = _addresses[_startAddress - 1];
+            fader1.Value = _addresses[_startAddress + 0];
+            fader2.Value = _addresses[_startAddress + 1];
+            fader3.Value = _addresses[_startAddress + 2];
+            fader4.Value = _addresses[_startAddress + 3];
+            fader5.Value = _addresses[_startAddress + 4];
+            fader6.Value = _addresses[_startAddress + 5];
+            fader7.Value = _addresses[_startAddress + 6];
+            fader8.Value = _addresses[_startAddress + 7];
+            fader9.Value = _addresses[_startAddress + 8];
+            fader10.Value = _addresses[_startAddress + 9];
+            fader11.Value = _addresses[_startAddress + 10];
+            fader12.Value = _addresses[_startAddress + 11];
+            fader13.Value = _addresses[_startAddress + 12];
+            fader14.Value = _addresses[_startAddress + 13];
+            fader15.Value = _addresses[_startAddress + 14];
+        }
+
         public void Dispose()
         {
             _cancellationTokenSource.Cancel();
@@ -137,5 +162,10 @@ namespace FooDmx
         {
         }
 
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+            new ListWindow(_output) { Left = this.Left + this.Width, Top = this.Top }.Show();
+        }
     }
 }

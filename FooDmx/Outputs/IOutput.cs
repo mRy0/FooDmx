@@ -13,7 +13,12 @@ namespace FooDmx.Outputs
 
         bool IsActive { get; }
 
+        byte[] Addresses { get; }
+
         void SetAddresses(byte[] addresses);
+
+        event Action<byte[]> Updated;
+
 
         Task RunAsync(CancellationToken cancellationToken);
 
