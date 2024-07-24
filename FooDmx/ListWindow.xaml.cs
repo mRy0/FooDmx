@@ -1,4 +1,5 @@
 ﻿using FooDmx.Outputs;
+using NumericUpDownLib.Base;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -23,170 +24,82 @@ namespace FooDmx
     {
 
         private IOutput _output;
-        List<DmxRow> _dmxRows = new();
 
-        public class DmxRow : INotifyPropertyChanged
-        {
-            private int[] _values = new int[32];
 
-            public int StartAddress { get; set; }
-            public int[] Values
-            {
-                get => _values;
-                set
-                {
-                    _values = value;
-                    OnPropertyChanged(nameof(Values));
-                }
-            }
-            public int this[int index]
-            {
-                get => _values[index];
-                set
-                {
-                    if (_values[index] != value)
-                    {
-                        _values[index] = value;
-                        OnPropertyChanged($"Values[{index}]");
-                    }
-                }
-            }
+        private byte[] _addresses = new byte[512];
 
-            public event PropertyChangedEventHandler PropertyChanged;
-
-            protected void OnPropertyChanged(string propertyName)
-            {
-                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
 
         public ListWindow(IOutput output)
         {
             _output = output;
+            _addresses = _output.Addresses; 
             InitializeComponent();
-            LoadDmxAddresses();
+            CreateGrid();
 
-            _output.Updated += _output_Updated;
         }
 
-        private void _output_Updated(byte[] addr)
+        private void CreateGrid()
         {
-            for (int i = 0; i < 16; i++)
-            {                
-                var row = _dmxRows[i];
+            for (int j = 0; j < 32; j++)
+            {
+                Griddy.ColumnDefinitions.Add(new ColumnDefinition());
+            }
 
-                //row.Values = addr.Skip((i * 32)).Take(32).Select(x => (int)x).ToArray();
+            for (int i = 0; i< 32; i++)
+            {
+                Griddy.RowDefinitions.Add(new RowDefinition());
+            }
+
+
+            for (int i = 0; i < 32; i += 2)
+            {
 
                 for (int j = 0; j < 32; j++)
                 {
-                    row.Values[j] = addr[i * 32 + j];
+                    var txt = new TextBlock();
+                    txt.Text = ((i /2 ) * 32 +  j + 1).ToString();
+
+                    Grid.SetRow(txt, i);
+                    Grid.SetColumn(txt, j);
+
+                    Griddy.Children.Add(txt);
+
                 }
-                    
+
+                for (int j = 0; j < 32; j++)
+                {
+                    var nbr = new NumericUpDownLib.NumericUpDown();
+                    nbr.MaxValue = 255;
+                    nbr.MinValue = 0;
+                    nbr.Value = _addresses[(i / 2) * 32 + j];
+                    nbr.IsIncDecButtonsVisible = false;
+                    nbr.IsLargeStepEnabled = false;
+                    nbr.IsMouseDragEnabled = false;
+                    nbr.IsDisplayLengthFixed = true;
+                    nbr.IsEnabled = true;
+                    nbr.FormatString = "D";
+                    nbr.StepSize = 1;
+
+                    Grid.SetRow(nbr, i + 1);
+                    Grid.SetColumn(nbr, j + 1);
+
+                    Griddy.Children.Add(nbr);
+
+                }
             }
-            DmxDataGrid.DataContext = _dmxRows; 
+
 
         }
+
 
         public ListWindow()
         {
             InitializeComponent();
-            LoadDmxAddresses();
-        }
-        private void LoadDmxAddresses()
-        {
-            var addr = _output.Addresses;
-
-            for (int i = 0; i < 16; i++)
-            {
-                var row = new DmxRow { StartAddress = (i *32) + 1 };
-                row.PropertyChanged += Row_PropertyChanged;
-                for (int j = 0; j < 32; j++)
-                {
-                    row.Values[j] = addr[(i* 16) + j];
-                }
-                _dmxRows.Add(row);
-            }
-
-            DmxDataGrid.ItemsSource = _dmxRows;
-        }
-
-        private void Row_PropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            var addr = new byte[513];
-
-            foreach (var row in _dmxRows)
-            {
-                for (int j = 0;j < 32; j++)
-                {
-                    addr[row.StartAddress + j] = (byte)row.Values[j];
-                }
-            }
-            _output.SetAddresses (addr);
+            CreateGrid();
         }
 
 
-        private void ValidateInput(object sender, TextCompositionEventArgs e)
-        {
-            e.Handled = !int.TryParse(e.Text, out _);
-        }
-
-        private void CorrectValue(object sender, RoutedEventArgs e)
-        {
-            if (sender is TextBox textBox)
-            {
-                if (int.TryParse(textBox.Text, out int value))
-                {
-                    if (value < 0)
-                    {
-                        textBox.Text = "0";
-                    }
-                    else if (value > 255)
-                    {
-                        textBox.Text = "255";
-                    }
-
-                }
-                else
-                {
-                    textBox.Text = "0";
-                }
-            }
-
-        }
-
-
-        private void TextBox_PreviewKeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Tab || e.Key == Key.Enter)
-            {
-                e.Handled = true;
-                var textBox = sender as TextBox;
-                if (textBox != null)
-                {
-                    textBox.MoveFocus(new TraversalRequest(FocusNavigationDirection.Next));
-                }
-            }
-        }
-
-        private void TextBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            if (sender is TextBox textBox)
-            {
-                textBox.SelectAll();
-            }
-        }
-
-        private void DmxDataGrid_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                e.Handled = true;
-                var uiElement = e.OriginalSource as UIElement;
-                if (uiElement != null)
-                {
-                    uiElement.MoveFocus(new TraversalRequest(FocusNavigationDirection.Right));
-                }
-            }
-        }
+       
+      
     }
 }

@@ -8,6 +8,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Dirkster.NumericUpDownLib" Version="3.4.0" />
     <PackageReference Include="FTD2XX.Net" Version="1.2.1" />
     <PackageReference Include="Haukcode.ArtNet" Version="1.3.5" />
   </ItemGroup>

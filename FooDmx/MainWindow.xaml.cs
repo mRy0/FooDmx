@@ -167,5 +167,10 @@ namespace FooDmx
 
             new ListWindow(_output) { Left = this.Left + this.Width, Top = this.Top }.Show();
         }
+
+        private void MenuItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
